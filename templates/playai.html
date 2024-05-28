@@ -59,7 +59,11 @@
                     promptInput.value = "";
                     textStyler(data.answer, response);
                 })
-                .catch(err => { console.log("ERROR", err) })
+                .catch(err => { 
+                    response.classList.remove("loader");
+                    response.textContent = "Oops! Something went wrong!"
+                    console.log("ERROR", err)
+                })
         })
     </script>
     <script src="/static/bootstrap.bundle.min.js"></script>

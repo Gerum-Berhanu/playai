@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayAI</title>
+</head>
+<body>
+    <form id="prompt-form">
+        <input type="text" name="prompt" placeholder="Ask ChatGPT" required>
+        <input type="submit" value="Send">
+    </form>
+    <div class="response-container">
+        <p id="response">The response will be displayed here...</p>
+    </div>
+
+    <script>
+        const form = document.getElementById("prompt-form")
+        form.addEventListener("submit", event => {
+            event.preventDefault()
+            const formData = new FormData(form)
+            fetch("/ask", {
+                method: "GET",
+                body: formData
+            })
+            .then(resp => resp.json())
+            .then(data => {console.log(data)})
+            .catch(err => {console.log("ERROR", err)})
+        })
+    </script>
+</body>
+</html>

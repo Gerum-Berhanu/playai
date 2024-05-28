@@ -7,7 +7,7 @@
 </head>
 <body>
     <form id="prompt-form">
-        <input type="text" name="prompt" placeholder="Ask ChatGPT" required>
+        <input type="text" name="prompt" placeholder="Ask PlayAI" required>
         <input type="submit" value="Send">
     </form>
     <div class="response-container">
@@ -16,15 +16,16 @@
 
     <script>
         const form = document.getElementById("prompt-form")
+        const response = document.getElementById("response")
         form.addEventListener("submit", event => {
             event.preventDefault()
             const formData = new FormData(form)
             fetch("/ask", {
-                method: "GET",
+                method: "POST",
                 body: formData
             })
             .then(resp => resp.json())
-            .then(data => {console.log(data)})
+            .then(data => {response.textContent = data.answer})
             .catch(err => {console.log("ERROR", err)})
         })
     </script>

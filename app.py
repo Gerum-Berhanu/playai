@@ -9,7 +9,8 @@ def index():
 @app.route("/ask", methods=["POST"])
 def ask():
     prompt = request.form["prompt"]
-    server_response = run(prompt)
+    # server_response = run(prompt)
+    server_response = run(prompt).replace("ChatGPT", "PlayAI").replace("OpenAI", "Codopia")
     response = {"answer": server_response}
     return jsonify(response)
 

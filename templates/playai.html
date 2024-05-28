@@ -1,33 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/static/imgs/robot.png" type="image/x-icon">
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/playai.css">
     <title>PlayAI</title>
 </head>
-<body>
-    <form id="prompt-form">
-        <input type="text" name="prompt" placeholder="Ask PlayAI" required>
-        <input type="submit" value="Send">
-    </form>
-    <div class="response-container">
-        <p id="response">The response will be displayed here...</p>
+
+<body class="vh-100 d-flex flex-column">
+    <div class="container-fluid flex-grow-1 bg-gradient-darklime d-flex justify-content-start align-items-center flex-column">
+        <img src="/static/imgs/robot.png" class="my-5" alt="PlayAI Picture" width="100px">
+        <form id="prompt-form" class="mb-5 w-50 d-flex">
+            <input type="text" name="prompt" id="prompt" class="p-3 flex-grow-1" placeholder="Ask PlayAI" required>
+            <button type="submit" id="send" class="border border-2 border-white">
+                <img src="/static/imgs/send_fancy.svg" class="p-3" alt="Send" width="56.25">
+            </button>
+        </form>
+        <div class="response-container">
+            <p id="response" class="text-white">The response will be displayed here...</p>
+        </div>
     </div>
 
     <script>
+        function time(ms) {
+            return new Promise((resolve, reject) => {
+                setTimeout(resolve, ms); // Relationship between work and time
+            });
+        }
+
+        async function textStyler(text, node) {
+            try {
+                for (let i = 0; i < text.length; i++) {
+                    await time(25);
+                    node.textContent += text[i];
+                }
+            }
+            catch (error) { console.log("ERROR", error); }
+        }
+
         const form = document.getElementById("prompt-form")
+        const promptInput = document.getElementById("prompt")
         const response = document.getElementById("response")
         form.addEventListener("submit", event => {
             event.preventDefault()
+            response.textContent = ""
+            response.classList.add("loader")
             const formData = new FormData(form)
             fetch("/ask", {
                 method: "POST",
                 body: formData
             })
-            .then(resp => resp.json())
-            .then(data => {response.textContent = data.answer})
-            .catch(err => {console.log("ERROR", err)})
+                .then(resp => resp.json())
+                .then(data => {
+                    response.classList.remove("loader");
+                    promptInput.value = "";
+                    textStyler(data.answer, response);
+                })
+                .catch(err => { console.log("ERROR", err) })
         })
     </script>
+    <script src="/static/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

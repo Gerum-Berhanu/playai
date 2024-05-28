@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: playai-blaze
+    env: python
+    plan: free
+    buildCommand: ./setup.sh
+    startCommand: gunicorn app:app

@@ -1,0 +1,26 @@
+# Use the official Python image as a base
+FROM python:3.11
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file into the container
+COPY requirements.txt .
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y libicu66 libevent-2.1-7 libjpeg8 libenchant-2-2 libsecret-1-0 libffi7 libgles2 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Playwright
+RUN pip install playwright
+RUN playwright install
+
+# Copy the rest of your application's code into the container
+COPY . .
+
+# Specify the command to run your application
+CMD ["python", "your_script.py"]

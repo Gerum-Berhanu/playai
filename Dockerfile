@@ -8,12 +8,13 @@ WORKDIR /app
 COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 # Install Playwright and necessary dependencies
-RUN apt-get update && apt-get install -y libatk-bridge2.0-0 libgtk-3-0 libdrm2 libxdamage1 libxrandr2 libgbm1 libasound2
-RUN playwright install
+RUN apt-get update && \
+    apt-get install -y libatk-bridge2.0-0 libgtk-3-0 libdrm2 libxdamage1 libxrandr2 libgbm1 libasound2 && \
+    curl -fsSL https://playwright.dev/install.sh | bash
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000

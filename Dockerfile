@@ -14,7 +14,8 @@ RUN pip install --upgrade pip && \
 # Install Playwright and necessary dependencies
 RUN apt-get update && \
     apt-get install -y libatk-bridge2.0-0 libgtk-3-0 libdrm2 libxdamage1 libxrandr2 libgbm1 libasound2 && \
-    curl -fsSL https://playwright.dev/install.sh | bash
+    curl -fsSL https://playwright.dev/install.sh | bash && \
+    playwright install
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000

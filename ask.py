@@ -35,7 +35,7 @@ from playwright.async_api import async_playwright
 
 async def run(prompt):
     async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(headless=False)
+        browser = await playwright.chromium.launch(headless=True)
         page = await browser.new_page()
         url = "https://chatgpt.com"
         await page.goto(url)

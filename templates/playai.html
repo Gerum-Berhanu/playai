@@ -57,7 +57,9 @@
                 .then(data => {
                     response.classList.remove("loader");
                     promptInput.value = "";
-                    textStyler(data.answer, response);
+                    data["answer"].forEach(async ans => {
+                        await textStyler(ans, response);
+                    });
                 })
                 .catch(err => { 
                     response.classList.remove("loader");

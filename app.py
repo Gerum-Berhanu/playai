@@ -15,8 +15,8 @@ def index():
 async def ask():
     prompt = request.form["prompt"]
     server_response = await run_async(prompt)
-    server_response = server_response.replace("ChatGPT", "PlayAI").replace("OpenAI", "Codopia")
-    response = {"answer": server_response}
+    modified = [resp.replace("ChatGPT", "PlayAI").replace("OpenAI", "Codopia") for resp in server_response]
+    response = {"answer": modified}
     return jsonify(response)
 
 if __name__ == "__main__":

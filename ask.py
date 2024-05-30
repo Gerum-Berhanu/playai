@@ -1,64 +1,45 @@
-# import asyncio
-# from playwright.async_api import async_playwright
-
-# async def run(prompt):
-#     async with async_playwright() as playwright:
-#         browser = await playwright.chromium.launch(headless=False, args=['--disable-gpu'])
-#         page = await browser.new_page()
-#         url = "https://chatgpt.com"
-#         await page.goto(url)
-
-#                 # Wait for the textarea and button to be available without requiring them to be visible
-#         await page.wait_for_selector("xpath=//*[@id='prompt-textarea']", state='attached')
-#         await page.wait_for_selector("xpath=//*[@id='__next']/div[1]/div[2]/main/div[2]/div[2]/div[1]/div/form/div/div[2]/div/button", state='attached')
-        
-#         textarea = await page.query_selector("xpath=//*[@id='prompt-textarea']")
-#         button = await page.query_selector("xpath=//*[@id='__next']/div[1]/div[2]/main/div[2]/div[2]/div[1]/div/form/div/div[2]/div/button")
-
-#         # Fill textarea, click button, and wait for the response
-#         await textarea.fill(prompt)
-#         await asyncio.sleep(1)
-#         await button.click()
-#         await page.query_selector("xpath=//*[@id='__next']/div[1]/div[2]/main/div[2]/div[1]/div/div/div/div/div[3]/div/div/div[2]/div[2]/div[2]/div/span/button")
-
-#         all_elements = await page.query_selector_all(".markdown.prose.w-full.break-words")
-#         last_element = all_elements[-1]
-        
-#         paragraphs = await last_element.query_selector_all('p')
-#         paragraph_texts = [await para.text_content() for para in paragraphs]
-
-#         await browser.close()
-#         return paragraph_texts
-    
 import asyncio
+from time import sleep
 from playwright.async_api import async_playwright
+
+async def block_ads(route, request):
+    # List of common ad-serving domains
+    ad_domains = [
+        "doubleclick.net",
+        "googleadservices.com",
+        # Add more ad-serving domains as needed
+    ]
+
+    for domain in ad_domains:
+        if domain in request.url:
+            await route.abort()
+            return
+
+    await route.continue_()
 
 async def run(prompt):
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch(headless=True)
-        page = await browser.new_page()
-        url = "https://chatgpt.com"
-        await page.goto(url)
-        
-        # Wait for the textarea to appear
-        await page.wait_for_selector("xpath=//*[@id='prompt-textarea']", state='attached')
-        textarea = await page.query_selector("xpath=//*[@id='prompt-textarea']")
-        
-        # Wait for the button to appear
-        await page.wait_for_selector("xpath=//*[@id='__next']/div[1]/div[2]/main/div[2]/div[2]/div[1]/div/form/div/div[2]/div/button", state='attached')
-        button = await page.query_selector("xpath=//*[@id='__next']/div[1]/div[2]/main/div[2]/div[2]/div[1]/div/form/div/div[2]/div/button")
+        context = await browser.new_context()
 
-        # Fill textarea, click button, and wait for the response
-        await textarea.fill(prompt)
-        await asyncio.sleep(1)
-        await button.click()
-        await page.wait_for_selector("xpath=//*[@id='__next']/div[1]/div[2]/main/div[2]/div[1]/div/div/div/div/div[3]/div/div/div[2]/div[2]/div[2]/div/span/button")
+        page = await context.new_page()
+        await page.route("**/*", block_ads)
+        await page.goto("https://deepai.org/chat", timeout=60000)
 
-        all_elements = await page.query_selector_all(".markdown.prose.w-full.break-words")
-        last_element = all_elements[-1]
-        
-        paragraphs = await last_element.query_selector_all('p')
-        paragraph_texts = [await para.text_content() for para in paragraphs]
+        stoppers = ["exit", "stop", "quit", "abort"]
+        while prompt.lower() not in stoppers and prompt:
+            textarea = await page.query_selector("textarea[placeholder='Chat with AI...']")
+            button = await page.query_selector("#chatSubmitButton")
+
+            await textarea.fill(prompt)
+            await button.click()
+            await asyncio.sleep(5)
+
+            containers = await page.query_selector_all(".outputBox")
+            container = containers[-1]
+            paragraphs = await container.query_selector_all("p")
+            paragraph_texts = [await para.text_content() for para in paragraphs]
+            return paragraph_texts
 
         await browser.close()
-        return paragraph_texts
+        return ["chat stopped"]

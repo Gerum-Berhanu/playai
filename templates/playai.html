@@ -26,8 +26,6 @@
     </div>
 
     <script>
-        let toBeDisplayed = null;
-
         const form = document.getElementById("prompt-form");
         const promptInput = document.getElementById("prompt");
         const response = document.getElementById("response");
@@ -48,18 +46,21 @@
 
                 response.classList.remove("loader");
                 promptInput.value = "";
-                toBeDisplayed = data.answer;
 
-                for (const element of toBeDisplayed) {
-                    await typeText(element, response);
+                console.log(data.answer);
+
+                for (const text of data.answer) {
+                    const newPara = document.createElement("p")
+                    newPara.classList.add("response-paragraph")
+                    response.appendChild(newPara)
+
+                    await typeText(text, response.lastElementChild)
                 }
             } catch (err) {
                 response.classList.remove("loader");
                 response.textContent = "Oops! Something went wrong!";
                 console.log("ERROR", err);
             }
-
-            console.log(toBeDisplayed);
         });
 
         async function typeText(text, element) {

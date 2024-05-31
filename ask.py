@@ -19,7 +19,7 @@ async def block_ads(route, request):
 
 async def run(prompt):
     async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(headless=True)
+        browser = await playwright.chromium.launch(headless=False)
         context = await browser.new_context()
 
         page = await context.new_page()
@@ -39,7 +39,9 @@ async def run(prompt):
             container = containers[-1]
             paragraphs = await container.query_selector_all("p")
             paragraph_texts = [await para.text_content() for para in paragraphs]
+            print("Browser is running")
             return paragraph_texts
 
+        print("Browser closed")
         await browser.close()
         return ["chat stopped"]

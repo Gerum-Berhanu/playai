@@ -19,7 +19,7 @@ async def block_ads(route, request):
 
 async def run(prompt):
     async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(headless=False)
+        browser = await playwright.chromium.launch(headless=True)
         context = await browser.new_context()
 
         page = await context.new_page()

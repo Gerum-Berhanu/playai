@@ -50,11 +50,12 @@
                 console.log(data.answer);
 
                 for (const text of data.answer) {
-                    const newPara = document.createElement("p")
-                    newPara.classList.add("response-paragraph")
-                    response.appendChild(newPara)
+                    // const newPara = document.createElement("p")
+                    // newPara.classList.add("response-paragraph")
+                    // response.appendChild(newPara)
+                    response.innerHTML = data.answer
 
-                    await typeText(text, response.lastElementChild)
+                    // await typeText(text, response.lastElementChild)
                 }
             } catch (err) {
                 response.classList.remove("loader");

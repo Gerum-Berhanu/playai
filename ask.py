@@ -46,7 +46,6 @@ async def run():
                 html = await container[-1].inner_html()
                 print(html)
 
-                return html
                 await screen_capture(page, path, full_page=True)
 
                 prompt = input("Ask PlayAI: ")

@@ -62,3 +62,39 @@
 .custom-bg-light {
     background-color: rgba(255, 255, 255, 0.125);
 }
+
+.custom-bg-darkblue {
+    background-color: rgba(0, 0, 255, 0.125);
+}
+
+.auto-resize {
+    overflow: hidden;
+    resize: none;
+}
+
+/* Scrollbar */
+
+/* WebKit Browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 6px;
+    /* Width of the vertical scrollbar */
+    height: 6px;
+    /* Height of the horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(10, 41, 38, 1);
+    /* Transparent background for the track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #8e2de2, #4a00e0);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    /* Add shadow to the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #4a00e0, #8e2de2);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+    /* More pronounced shadow on hover */
+}

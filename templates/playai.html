@@ -13,13 +13,16 @@
 <body class="vh-100 d-flex flex-column">
     <div class="container-fluid flex-grow-1 bg-gradient-darklime d-flex justify-content-start align-items-center flex-column">
         <img src="/static/imgs/robot.png" class="my-5" alt="PlayAI Picture" width="100px">
-        <form id="prompt-form" class="col-sm-6 col-12 mb-5 d-flex">
-            <textarea type="text" name="prompt" id="prompt" class="p-3 flex-grow-1" placeholder="Ask PlayAI" required></textarea>
+        <form id="prompt-form" class="col-sm-8 col-12 mb-5 d-flex">
+            <textarea type="text" name="prompt" id="prompt" class="p-3 flex-grow-1 auto-resize" placeholder="Ask PlayAI" required></textarea>
             <button type="submit" id="send" class="bg-white border border-2 border-white">
                 <img src="/static/imgs/send_fancy.svg" class="p-3" alt="Send" width="56.25">
             </button>
         </form>
-        <div class="response-container">
+        <div class="response-container col-12 d-flex flex-column justify-content-start align-items-center">
+            <div id="loader-container" class="d-flex justify-content-center">
+                <div id="loader" class="mb-5"></div>
+            </div>
             <div id="response" class="text-white">The response will be displayed here...</div>
         </div>
     </div>
@@ -27,14 +30,27 @@
     <script>
         const form = document.getElementById("prompt-form");
         const promptInput = document.getElementById("prompt");
+        const sendBtn = document.getElementById("send");
         const response = document.getElementById("response");
+        const loader = document.getElementById("loader");
 
-        form.addEventListener("submit", async event => {
+        loader.style.display = "none"
+
+        promptInput.addEventListener('input', autoResize);
+        function autoResize() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        }
+
+        async function ask(event) {
             event.preventDefault();
-            response.textContent = "";
-            response.classList.add("loader");
+            if (response.textContent == "The response will be displayed here...") {
+                response.textContent = "";
+            }
+            loader.style.display = "flex"
+            loader.classList.add("loader");
             const formData = new FormData(form);
-
+    
             try {
                 const resp = await fetch("/ask", {
                     method: "POST",
@@ -42,23 +58,37 @@
                 });
                 if (!resp.ok) throw new Error("Failed to receive response from PlayAI!");
                 const data = await resp.json();
+    
+                const myPromptContainer = document.createElement("div")
+                const myPrompt = document.createElement("p")
+                myPrompt.textContent = promptInput.value;
+                myPromptContainer.appendChild(myPrompt)
+                myPromptContainer.classList.add("border", "border-3", "rounded-3", "border-white", "p-3", "mb-2", "shadow-lg", "custom-bg-darkblue")
+
+                const newResponse = document.createElement("div")
+                newResponse.classList.add("border", "border-3", "rounded-3", "border-white", "p-3", "mb-5", "shadow-lg", "custom-bg-light")
+                newResponse.innerHTML = data.answer
 
                 response.classList.remove("loader");
                 promptInput.value = "";
 
-                console.log(data.answer);
+                loader.classList.remove("loader");
+                loader.style.display = "none"
 
-                const newResponse = document.createElement("div")
-                newResponse.classList.add("border", "border-3", "rounded-3", "border-white", "p-3", "shadow-lg", "custom-bg-light")
-                newResponse.innerHTML = data.answer
-                response.appendChild(newResponse)
+                const firstChild = response.firstChild;
+                // insert the new node before the first child node
+                response.insertBefore(myPromptContainer, firstChild);
+                response.insertBefore(newResponse, firstChild);
+                
                 // await typeText(text, response.lastElementChild)
             } catch (err) {
-                response.classList.remove("loader");
+                loader.classList.remove("loader");
                 response.textContent = "Oops! Something went wrong!";
                 console.log("ERROR", err);
             }
-        });
+        }
+
+        form.addEventListener("submit", ask);
 
         async function typeText(text, element) {
             for (let i = 0; i < text.length; i++) {

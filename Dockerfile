@@ -7,30 +7,16 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
-# Install system dependencies and clean up to reduce image size
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    libatk-bridge2.0-0 \
-    libgtk-3-0 \
-    libdrm2 \
-    libxdamage1 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    libnss3 \
-    libnspr4 \
-    curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install Playwright and dependencies
-RUN curl -fsSL https://playwright.dev/install.sh | bash && \
-    playwright install && \
-    playwright install-deps
-
 # Install any needed packages specified in requirements.txt
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
+
+# Install Playwright and necessary dependencies
+RUN apt-get update && \
+    apt-get install -y libatk-bridge2.0-0 libgtk-3-0 libdrm2 libxdamage1 libxrandr2 libgbm1 libasound2 libnss3 libnspr4 && \
+    curl -fsSL https://playwright.dev/install.sh | bash && \
+    playwright install && \
+    playwright install-deps
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000

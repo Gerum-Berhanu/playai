@@ -14,9 +14,8 @@
     <div class="container-fluid flex-grow-1 bg-gradient-darklime d-flex justify-content-start align-items-center flex-column">
         <img src="/static/imgs/robot.png" class="my-5" alt="PlayAI Picture" width="100px">
         <form id="prompt-form" class="col-sm-6 col-12 mb-5 d-flex">
-            <input type="text" name="prompt" id="prompt" class="p-3 flex-grow-1 form-control" placeholder="Ask PlayAI"
-                required>
-            <button type="submit" id="send" class="border border-2 border-white">
+            <textarea type="text" name="prompt" id="prompt" class="p-3 flex-grow-1" placeholder="Ask PlayAI" required></textarea>
+            <button type="submit" id="send" class="bg-white border border-2 border-white">
                 <img src="/static/imgs/send_fancy.svg" class="p-3" alt="Send" width="56.25">
             </button>
         </form>
@@ -49,14 +48,11 @@
 
                 console.log(data.answer);
 
-                for (const text of data.answer) {
-                    // const newPara = document.createElement("p")
-                    // newPara.classList.add("response-paragraph")
-                    // response.appendChild(newPara)
-                    response.innerHTML = data.answer
-
-                    // await typeText(text, response.lastElementChild)
-                }
+                const newResponse = document.createElement("div")
+                newResponse.classList.add("border", "border-3", "rounded-3", "border-white", "p-3", "shadow-lg", "custom-bg-light")
+                newResponse.innerHTML = data.answer
+                response.appendChild(newResponse)
+                // await typeText(text, response.lastElementChild)
             } catch (err) {
                 response.classList.remove("loader");
                 response.textContent = "Oops! Something went wrong!";

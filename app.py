@@ -28,7 +28,7 @@ def index():
 def ask():
     prompt = request.form["prompt"]
     future = asyncio.run_coroutine_threadsafe(run(prompt), loop)
-    server_response = future.result()
+    server_response = future.result().replace("LLaMA", "PlayAI").replace("Meta AI", "Codopia")
     response = {"answer": server_response}
     return jsonify(response)
 

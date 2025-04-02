@@ -40,7 +40,7 @@ async def run(prompt):
     if not page:
         raise ValueError("Browser page is not initialized")
     
-    textarea = await page.query_selector_all("textarea[placeholder='Chat with AI...']")
+    textarea = await page.query_selector_all("textarea[placeholder='Message AI Chat...']")
     textarea = textarea[-1]
     button = await page.query_selector("#chatSubmitButton")
 

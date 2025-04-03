@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 import asyncio
 import threading
 from ask import run, init_browser, close_browser
 
 app = Flask(__name__)
+CORS(app) # This allows all domains to access your API
 
 # Create and set a new event loop in a separate thread
 loop = asyncio.new_event_loop()
@@ -28,7 +30,7 @@ def index():
 def ask():
     prompt = request.form["prompt"]
     future = asyncio.run_coroutine_threadsafe(run(prompt), loop)
-    server_response = future.result().replace("LLaMA", "PlayAI").replace("Meta AI", "Codopia")
+    server_response = future.result().replace("LLaMA", "PlayAI").replace("Meta AI", "Codopia Team").replace("DeepAI", "Codopia")
     response = {"answer": server_response}
     return jsonify(response)
 

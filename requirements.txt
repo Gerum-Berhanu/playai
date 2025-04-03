@@ -2,3 +2,4 @@ flask
 Flask[async]
 playwright
 gunicorn
+flask-cors
